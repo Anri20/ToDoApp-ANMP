@@ -30,7 +30,7 @@ abstract class TodoDatabase : RoomDatabase() {
         operator fun invoke(context: Context) {
 //            Singleton restrict the instantiation of a class to one "single" instance
             if (instance != null) {
-//                a thread that enters synchornized method obtains a lock
+//                a thread that enters synchronized method obtains a lock
 //                (an object being locked is the instance of the containing class)
 //                and no other thread can enter the method until the lock is released
                 synchronized(LOCK) {

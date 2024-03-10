@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.todoapp.R
 import com.example.todoapp.model.Todo
 
-class TodoListAdapter(val todoList: ArrayList<Todo>, val adapterOnClick: (Todo) -> Unit) :
+class TodoListAdapter(val todoList: ArrayList<Todo>, val adapterOnClick: (Int, Int) -> Unit) :
     RecyclerView.Adapter<TodoListAdapter.TodoViewHolder>() {
     class TodoViewHolder(var view: View) : RecyclerView.ViewHolder(view)
 
@@ -35,8 +35,9 @@ class TodoListAdapter(val todoList: ArrayList<Todo>, val adapterOnClick: (Todo) 
         }
 
         checkTask.setOnCheckedChangeListener { compoundButton, isChecked ->
-            if(isChecked){
-                adapterOnClick(todoList[position])
+            when (isChecked) {
+                true -> adapterOnClick(1, todoList[position].uuid)
+                false -> adapterOnClick(0, todoList[position].uuid)
             }
         }
     }
