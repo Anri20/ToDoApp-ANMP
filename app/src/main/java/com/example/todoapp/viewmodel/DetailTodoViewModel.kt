@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.room.Room
 import com.example.todoapp.model.Todo
 import com.example.todoapp.model.TodoDatabase
+import com.example.todoapp.util.buildDb
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -17,8 +18,7 @@ class DetailTodoViewModel(application: Application) : AndroidViewModel(applicati
 
     fun addTodo(list: List<Todo>) {
         launch {
-            val db = Room.databaseBuilder(getApplication(), TodoDatabase::class.java, "newtododb")
-                .build()
+            val db = buildDb(getApplication())
 //            *list converts individual element of list into its individual object (Todo object) and set it as separated parameter
             db.todoDao().insertAll(*list.toTypedArray())
         }
