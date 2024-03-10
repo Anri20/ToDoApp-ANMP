@@ -10,7 +10,7 @@ val DB_NAME = "newtododb"
 
 fun buildDb(context: Context): TodoDatabase {
     val db = Room.databaseBuilder(context, TodoDatabase::class.java, DB_NAME)
-        .addMigrations(MIGRATION_1_2)
+        .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
         .build()
     return db
 }
@@ -19,5 +19,11 @@ fun buildDb(context: Context): TodoDatabase {
 val MIGRATION_1_2 = object : Migration(1, 2) {
     override fun migrate(db: SupportSQLiteDatabase) {
         db.execSQL("alter table todo add column priority integer default 3 not null")
+    }
+}
+
+val MIGRATION_2_3 = object : Migration(2, 3) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("alter table todo add column is_done integer default 0 not null")
     }
 }
