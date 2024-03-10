@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.todoapp.R
 import com.example.todoapp.model.Todo
 
-class TodoListAdapter(val todoList: ArrayList<Todo>) :
+class TodoListAdapter(val todoList: ArrayList<Todo>, val adapterOnClick: (Todo) -> Unit) :
     RecyclerView.Adapter<TodoListAdapter.TodoViewHolder>() {
     class TodoViewHolder(var view: View) : RecyclerView.ViewHolder(view)
 
@@ -26,6 +26,10 @@ class TodoListAdapter(val todoList: ArrayList<Todo>) :
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
         var checkTask = holder.view.findViewById<CheckBox>(R.id.checkTask)
         checkTask.text = todoList[position].title
+
+        checkTask.setOnCheckedChangeListener { compoundButton, b ->
+            adapterOnClick(todoList[position])
+        }
     }
 
     fun updateTodoList(newTodoList: List<Todo>) {
