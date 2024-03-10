@@ -12,7 +12,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
-class ListTodoViewModel(application: Application): AndroidViewModel(application), CoroutineScope {
+class ListTodoViewModel(application: Application) : AndroidViewModel(application), CoroutineScope {
     val todoLD = MutableLiveData<List<Todo>>()
     val todoLoadErrorLD = MutableLiveData<Boolean>()
     val loadingLD = MutableLiveData<Boolean>()
@@ -22,20 +22,22 @@ class ListTodoViewModel(application: Application): AndroidViewModel(application)
         get() = job + Dispatchers.IO
 //    Dispatchers tell you, on which thread should I run this block of code in (Main, IO, Default)
 
-    fun refresh(){
+    fun refresh() {
         loadingLD.value = true
         todoLoadErrorLD.value = false
 //        use launch function to create a job. The launch is known as fire and forget builder
         launch {
-            val db = Room.databaseBuilder(getApplication(),TodoDatabase::class.java, "newtododb").build()
+            val db = Room.databaseBuilder(getApplication(), TodoDatabase::class.java, "newtododb")
+                .build()
 //            use postValue to asynchronously handle expected result from DAO
             todoLD.postValue(db.todoDao().selectAllTodo())
         }
     }
 
-    fun clearTask(todo: Todo){
-        launch{
-            val db = Room.databaseBuilder(getApplication(),TodoDatabase::class.java, "newtododb").build()
+    fun clearTask(todo: Todo) {
+        launch {
+            val db = Room.databaseBuilder(getApplication(), TodoDatabase::class.java, "newtododb")
+                .build()
             db.todoDao().deleteTodo(todo)
             todoLD.postValue(db.todoDao().selectAllTodo())
         }
