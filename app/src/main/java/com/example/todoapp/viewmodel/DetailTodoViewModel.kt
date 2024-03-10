@@ -15,7 +15,7 @@ import kotlin.coroutines.CoroutineContext
 
 class DetailTodoViewModel(application: Application) : AndroidViewModel(application),
     CoroutineScope {
-        val todoLD = MutableLiveData<Todo>()
+    val todoLD = MutableLiveData<Todo>()
     private val job = Job()
 
     fun addTodo(list: List<Todo>) {
@@ -29,10 +29,22 @@ class DetailTodoViewModel(application: Application) : AndroidViewModel(applicati
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.IO
 
-    fun fetch(uuid: Int){
-        launch{
+    fun fetch(uuid: Int) {
+        launch {
             val db = buildDb(getApplication())
             todoLD.postValue(db.todoDao().selectTodo(uuid))
+        }
+    }
+
+    fun update(title: String, notes: String, priority: Int, uuid: Int) {
+        launch {
+            val db = buildDb(getApplication())
+            db.todoDao().update(
+                title = title,
+                notes = notes,
+                priority = priority,
+                id = uuid
+            )
         }
     }
 }

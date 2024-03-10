@@ -6,9 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import com.example.todoapp.R
 import com.example.todoapp.viewmodel.DetailTodoViewModel
 import com.google.android.material.textfield.TextInputEditText
@@ -29,18 +33,38 @@ class EditTodoFragment : Fragment() {
         detailViewModel = ViewModelProvider(this).get(DetailTodoViewModel::class.java)
 
         view.findViewById<TextView>(R.id.txtHeader).text = "Edit ToDo"
-        view.findViewById<Button>(R.id.btnAdd).text = "Save Changes"
+        val btnAdd = view.findViewById<Button>(R.id.btnAdd)
+        btnAdd.text = "Save Changes"
 
         val uuid = EditTodoFragmentArgs.fromBundle(requireArguments()).uuid
         detailViewModel.fetch(uuid)
 
         observeViewModel()
+
+        btnAdd.setOnClickListener {
+            val radio =
+                view.findViewById<RadioButton>(view.findViewById<RadioGroup>(R.id.rbgPriority).checkedRadioButtonId)
+            detailViewModel.update(
+                title = view.findViewById<TextInputEditText>(R.id.inputTitle).text.toString(),
+                notes = view.findViewById<TextInputEditText>(R.id.inputNotes).text.toString(),
+                priority = radio.tag.toString().toInt(),
+                uuid = uuid
+            )
+            Toast.makeText(view.context, "ToDo Updated", Toast.LENGTH_LONG).show()
+            Navigation.findNavController(it).popBackStack()
+        }
     }
 
     private fun observeViewModel() {
         detailViewModel.todoLD.observe(viewLifecycleOwner, Observer {
             view?.findViewById<TextInputEditText>(R.id.inputTitle)?.setText(it.title)
             view?.findViewById<TextInputEditText>(R.id.inputNotes)?.setText(it.notes)
+
+            when (it.priority) {
+                1 -> view?.findViewById<RadioButton>(R.id.rbLow)?.isChecked = true
+                2 -> view?.findViewById<RadioButton>(R.id.rbMedium)?.isChecked = true
+                3 -> view?.findViewById<RadioButton>(R.id.rbHigh)?.isChecked = true
+            }
         })
     }
 }
