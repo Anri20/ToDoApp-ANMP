@@ -27,7 +27,7 @@ class TodoListAdapter(val todoList: ArrayList<Todo>, val adapterOnClick: (Todo) 
 
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
         var checkTask = holder.view.findViewById<CheckBox>(R.id.checkTask)
-        checkTask.text = todoList[position].title
+        checkTask.text = "${todoList[position].title} - priority: ${todoList[position].priority}"
 
         holder.view.findViewById<ImageView>(R.id.imgEdit).setOnClickListener {
             val action = TodoListFragmentDirections.actionEditTodo(todoList[position].uuid)
