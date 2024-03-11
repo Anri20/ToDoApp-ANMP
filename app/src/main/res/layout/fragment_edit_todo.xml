@@ -128,7 +128,7 @@
                     android:id="@+id/rbMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:checked="@{todo.priority == 2 ? true : false}"
+                    android:checked="@{todo.priority == 2}"
                     android:onClick="@{(view) -> radioListener.onRadioClick(view, 2, todo)}"
                     android:tag="2"
                     android:text="Medium Priority" />
