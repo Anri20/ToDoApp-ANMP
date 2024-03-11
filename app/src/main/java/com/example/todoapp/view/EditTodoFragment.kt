@@ -50,7 +50,7 @@ class EditTodoFragment : Fragment() {
                 priority = radio.tag.toString().toInt(),
                 uuid = uuid
             )
-            Toast.makeText(view.context, "ToDo Updated", Toast.LENGTH_LONG).show()
+            Toast.makeText(view.context, "ToDo Updated", Toast.LENGTH_SHORT).show()
             Navigation.findNavController(it).popBackStack()
         }
     }
