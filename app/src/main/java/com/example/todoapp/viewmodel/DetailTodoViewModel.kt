@@ -47,4 +47,11 @@ class DetailTodoViewModel(application: Application) : AndroidViewModel(applicati
             )
         }
     }
+
+    fun update(todo: Todo) {
+        launch {
+            val db = buildDb(getApplication())
+            db.todoDao().update(todo)
+        }
+    }
 }

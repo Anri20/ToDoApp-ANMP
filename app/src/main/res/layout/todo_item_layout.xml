@@ -30,7 +30,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:onCheckedChanged="@{(cb, isChecked) -> checkedChangeListener.onCheckedChange(cb, isChecked, todo)}"
-            android:text="@{todo.title}"
+            android:text="@{todo.title+' '+' '+'-'+' '+' '+todo.notes+' '+' '+'-'+' '+' '+'['+todo.priority+']'}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
