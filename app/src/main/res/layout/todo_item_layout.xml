@@ -10,8 +10,12 @@
             type="com.example.todoapp.model.Todo" />
 
         <variable
-            name="listener"
-            type="com.example.todoapp.view.TodoCheckChangeListener" />
+            name="checkedChangeListener"
+            type="com.example.todoapp.view.TodoCheckedChangeListener" />
+
+        <variable
+            name="editListener"
+            type="com.example.todoapp.view.TodoEditClicked" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -25,7 +29,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:onCheckedChanged="@{(cb, isChecked) -> listener.onCheckChanged(cb, isChecked, todo)}"
+            android:onCheckedChanged="@{(cb, isChecked) -> checkedChangeListener.onCheckedChange(cb, isChecked, todo)}"
             android:text="@{todo.title}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -37,6 +41,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
+            android:tag="@{todo.uuid}"
+            android:onClick="@{editListener::onClick}"
             app:layout_constraintBottom_toBottomOf="@+id/checkTask"
             app:layout_constraintEnd_toEndOf="@+id/checkTask"
             app:layout_constraintTop_toTopOf="@+id/checkTask"

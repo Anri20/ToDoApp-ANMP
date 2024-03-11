@@ -14,7 +14,7 @@ import com.example.todoapp.databinding.TodoItemLayoutBinding
 import com.example.todoapp.model.Todo
 
 class TodoListAdapter(val todoList: ArrayList<Todo>, val adapterOnClick: (Int, Int) -> Unit) :
-    RecyclerView.Adapter<TodoListAdapter.TodoViewHolder>(), TodoCheckChangeListener {
+    RecyclerView.Adapter<TodoListAdapter.TodoViewHolder>(), TodoCheckedChangeListener, TodoEditClicked {
     class TodoViewHolder(var view: TodoItemLayoutBinding) : RecyclerView.ViewHolder(view.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoViewHolder {
@@ -36,7 +36,8 @@ class TodoListAdapter(val todoList: ArrayList<Todo>, val adapterOnClick: (Int, I
 
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
         holder.view.todo = todoList[position]
-        holder.view.listener = this
+        holder.view.checkedChangeListener = this
+        holder.view.editListener = this
         /*var checkTask = holder.view.findViewById<CheckBox>(R.id.checkTask)
         checkTask.text = "${todoList[position].title}  -  ${todoList[position].notes}  -  [${todoList[position].priority}]"
 
@@ -59,11 +60,17 @@ class TodoListAdapter(val todoList: ArrayList<Todo>, val adapterOnClick: (Int, I
         notifyDataSetChanged()
     }
 
-    override fun onCheckChanged(cb: CompoundButton, isChecked: Boolean, todo: Todo) {
+    override fun onCheckedChange(cb: CompoundButton, isChecked: Boolean, todo: Todo) {
         when (isChecked) {
             true -> adapterOnClick(1, todo.uuid)
             false -> adapterOnClick(0, todo.uuid)
         }
+    }
+
+    override fun onClick(view: View) {
+        val uuid = view.tag.toString().toInt()
+        val action = TodoListFragmentDirections.actionEditTodo(uuid)
+        Navigation.findNavController(view).navigate(action)
     }
 
 }
