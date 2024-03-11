@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.CompoundButton
 import android.widget.ImageView
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.Navigation
@@ -13,7 +14,7 @@ import com.example.todoapp.databinding.TodoItemLayoutBinding
 import com.example.todoapp.model.Todo
 
 class TodoListAdapter(val todoList: ArrayList<Todo>, val adapterOnClick: (Int, Int) -> Unit) :
-    RecyclerView.Adapter<TodoListAdapter.TodoViewHolder>() {
+    RecyclerView.Adapter<TodoListAdapter.TodoViewHolder>(), TodoCheckChangeListener {
     class TodoViewHolder(var view: TodoItemLayoutBinding) : RecyclerView.ViewHolder(view.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoViewHolder {
@@ -35,6 +36,7 @@ class TodoListAdapter(val todoList: ArrayList<Todo>, val adapterOnClick: (Int, I
 
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
         holder.view.todo = todoList[position]
+        holder.view.listener = this
         /*var checkTask = holder.view.findViewById<CheckBox>(R.id.checkTask)
         checkTask.text = "${todoList[position].title}  -  ${todoList[position].notes}  -  [${todoList[position].priority}]"
 
@@ -55,6 +57,13 @@ class TodoListAdapter(val todoList: ArrayList<Todo>, val adapterOnClick: (Int, I
         todoList.clear()
         todoList.addAll(newTodoList)
         notifyDataSetChanged()
+    }
+
+    override fun onCheckChanged(cb: CompoundButton, isChecked: Boolean, todo: Todo) {
+        when (isChecked) {
+            true -> adapterOnClick(1, todo.uuid)
+            false -> adapterOnClick(0, todo.uuid)
+        }
     }
 
 }
