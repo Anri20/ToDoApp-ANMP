@@ -5,18 +5,26 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.ImageView
+import androidx.databinding.DataBindingUtil
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todoapp.R
+import com.example.todoapp.databinding.TodoItemLayoutBinding
 import com.example.todoapp.model.Todo
 
 class TodoListAdapter(val todoList: ArrayList<Todo>, val adapterOnClick: (Int, Int) -> Unit) :
     RecyclerView.Adapter<TodoListAdapter.TodoViewHolder>() {
-    class TodoViewHolder(var view: View) : RecyclerView.ViewHolder(view)
+    class TodoViewHolder(var view: TodoItemLayoutBinding) : RecyclerView.ViewHolder(view.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val view = inflater.inflate(R.layout.todo_item_layout, parent, false)
+        val view = DataBindingUtil.inflate<TodoItemLayoutBinding>(
+            inflater,
+            R.layout.todo_item_layout,
+            parent,
+            false
+        )
+//        val view = TodoItemLayoutBinding.inflate(inflater, parent, false)
 
         return TodoViewHolder(view)
     }
@@ -26,7 +34,8 @@ class TodoListAdapter(val todoList: ArrayList<Todo>, val adapterOnClick: (Int, I
     }
 
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
-        var checkTask = holder.view.findViewById<CheckBox>(R.id.checkTask)
+        holder.view.todo = todoList[position]
+        /*var checkTask = holder.view.findViewById<CheckBox>(R.id.checkTask)
         checkTask.text = "${todoList[position].title}  -  ${todoList[position].notes}  -  [${todoList[position].priority}]"
 
         holder.view.findViewById<ImageView>(R.id.imgEdit).setOnClickListener {
@@ -39,7 +48,7 @@ class TodoListAdapter(val todoList: ArrayList<Todo>, val adapterOnClick: (Int, I
                 true -> adapterOnClick(1, todoList[position].uuid)
                 false -> adapterOnClick(0, todoList[position].uuid)
             }
-        }
+        }*/
     }
 
     fun updateTodoList(newTodoList: List<Todo>) {
