@@ -13,11 +13,16 @@ import android.widget.Toast
 import androidx.fragment.app.findFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.example.todoapp.R
 import com.example.todoapp.model.Todo
 import com.example.todoapp.util.NotificationHelper
+import com.example.todoapp.util.TodoWorker
 import com.example.todoapp.viewmodel.DetailTodoViewModel
 import com.google.android.material.textfield.TextInputEditText
+import java.util.concurrent.TimeUnit
 
 class CreateTodoFragment : Fragment() {
     private lateinit var detailViewModel: DetailTodoViewModel
@@ -54,6 +59,19 @@ class CreateTodoFragment : Fragment() {
 
 //            Notification
             NotificationHelper(view.context).createNotification("ToDo \"${inputTitle.text.toString()}\" Created", "A new ToDo has been created! Stay focus!")
+
+
+            val myWorkRequest = OneTimeWorkRequestBuilder<TodoWorker>()
+//                this means that the notification will show 30 seconds after work queued
+                .setInitialDelay(30, TimeUnit.SECONDS)
+                .setInputData(workDataOf(
+//                    Key-value pairs is an InputData object that constructed from the key & value pair. Left part is the key and the right part is the value
+                    "title" to "ToDo Created",
+                    "message" to "A new ToDo has been created! Stay focus!"))
+                .build()
+
+//            enqueue is where the work request is being queued. It will be registered on the android system and 30 seconds later will launch the notification
+            WorkManager.getInstance(requireContext()).enqueue(myWorkRequest)
         }
     }
 }
