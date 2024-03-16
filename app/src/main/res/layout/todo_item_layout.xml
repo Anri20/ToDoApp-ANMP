@@ -28,11 +28,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
             android:onCheckedChanged="@{(cb, isChecked) -> checkedChangeListener.onCheckedChange(cb, isChecked, todo)}"
             android:text="@{todo.title+' '+' '+'-'+' '+' '+todo.notes+' '+' '+'-'+' '+' '+'['+todo.priority+']'}"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/imgEdit"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -40,11 +40,11 @@
             android:id="@+id/imgEdit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:tag="@{todo.uuid}"
+            android:layout_marginEnd="24dp"
             android:onClick="@{editListener::onClick}"
+            android:tag="@{todo.uuid}"
             app:layout_constraintBottom_toBottomOf="@+id/checkTask"
-            app:layout_constraintEnd_toEndOf="@+id/checkTask"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/checkTask"
             app:srcCompat="@drawable/baseline_edit_24" />
 

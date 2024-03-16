@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import com.example.todoapp.R
 import com.example.todoapp.model.Todo
+import com.example.todoapp.util.NotificationHelper
 import com.example.todoapp.viewmodel.DetailTodoViewModel
 import com.google.android.material.textfield.TextInputEditText
 
@@ -50,6 +51,9 @@ class CreateTodoFragment : Fragment() {
 
             Toast.makeText(view.context, "ToDo Added", Toast.LENGTH_LONG).show()
             Navigation.findNavController(it).popBackStack()
+
+//            Notification
+            NotificationHelper(view.context).createNotification("ToDo \"${inputTitle.text.toString()}\" Created", "A new ToDo has been created! Stay focus!")
         }
     }
 }
