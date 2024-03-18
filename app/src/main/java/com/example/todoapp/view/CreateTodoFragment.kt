@@ -81,7 +81,7 @@ class CreateTodoFragment : Fragment(), RadioButtonListener, ButtonAddTodoClickLi
         */
 
         with(dataBinding) {
-            todo = Todo("", "", 3, 0)
+            todo = Todo("", "", 3, 0, 1)
             radioListener = this@CreateTodoFragment
             addListener = this@CreateTodoFragment
         }
