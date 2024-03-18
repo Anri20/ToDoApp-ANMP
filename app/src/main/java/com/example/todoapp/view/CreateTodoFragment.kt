@@ -1,14 +1,19 @@
 package com.example.todoapp.view
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.os.Bundle
+import android.text.format.DateFormat
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.DatePicker
 import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.TimePicker
 import android.widget.Toast
 import androidx.fragment.app.findFragment
 import androidx.lifecycle.ViewModelProvider
@@ -23,11 +28,22 @@ import com.example.todoapp.util.NotificationHelper
 import com.example.todoapp.util.TodoWorker
 import com.example.todoapp.viewmodel.DetailTodoViewModel
 import com.google.android.material.textfield.TextInputEditText
+import java.util.Calendar
 import java.util.concurrent.TimeUnit
+import kotlin.math.min
 
-class CreateTodoFragment : Fragment(), RadioButtonListener, ButtonAddTodoClickListener {
+class CreateTodoFragment : Fragment(), RadioButtonListener, ButtonAddTodoClickListener,
+    DateClickListener, TimeClickListener, DatePickerDialog.OnDateSetListener,
+    TimePickerDialog.OnTimeSetListener {
     private lateinit var detailViewModel: DetailTodoViewModel
     private lateinit var dataBinding: FragmentCreateTodoBinding
+
+    var year = 0
+    var month = 0
+    var day = 0
+    var hour = 0
+    var minute = 0
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -84,6 +100,8 @@ class CreateTodoFragment : Fragment(), RadioButtonListener, ButtonAddTodoClickLi
             todo = Todo("", "", 3, 0, 1)
             radioListener = this@CreateTodoFragment
             addListener = this@CreateTodoFragment
+            dateListener = this@CreateTodoFragment
+            timeListener = this@CreateTodoFragment
         }
     }
 
@@ -92,6 +110,13 @@ class CreateTodoFragment : Fragment(), RadioButtonListener, ButtonAddTodoClickLi
     }
 
     override fun onAddTodoClick(view: View) {
+        val c = Calendar.getInstance()
+        c.set(year, month, day, hour, minute, 0)
+        val today = Calendar.getInstance()
+        val diff = (c.timeInMillis/1000L) - (today.timeInMillis/1000L)
+
+        dataBinding.todo!!.todo_date = (c.timeInMillis/1000L).toInt()
+
         val list = listOf(dataBinding.todo!!)
         detailViewModel.addTodo(list)
 
@@ -99,7 +124,7 @@ class CreateTodoFragment : Fragment(), RadioButtonListener, ButtonAddTodoClickLi
 
         val myWorkRequest = OneTimeWorkRequestBuilder<TodoWorker>()
 //                this means that the notification will show 30 seconds after work queued
-            .setInitialDelay(10, TimeUnit.SECONDS)
+            .setInitialDelay(diff, TimeUnit.SECONDS)
             .setInputData(
                 workDataOf(
 //                    Key-value pairs is an InputData object that constructed from the key & value pair. Left part is the key and the right part is the value
@@ -112,6 +137,39 @@ class CreateTodoFragment : Fragment(), RadioButtonListener, ButtonAddTodoClickLi
 //            enqueue is where the work request is being queued. It will be registered on the android system and 30 seconds later will launch the notification
         WorkManager.getInstance(requireContext()).enqueue(myWorkRequest)
         Navigation.findNavController(view).popBackStack()
+    }
 
+    override fun onDateCLick(view: View) {
+        val c = Calendar.getInstance()
+        val year = c.get(Calendar.YEAR)
+        val month = c.get(Calendar.MONTH)
+        val day = c.get(Calendar.DAY_OF_MONTH)
+        activity?.let { it1 -> DatePickerDialog(it1, this, year, month, day).show() }
+    }
+
+    override fun onTimeCLick(view: View) {
+        val c = Calendar.getInstance()
+        val hour = c.get(Calendar.HOUR_OF_DAY)
+        val minute = c.get(Calendar.MINUTE)
+        TimePickerDialog(activity, this, hour, minute, DateFormat.is24HourFormat(activity)).show()
+    }
+
+    override fun onDateSet(p0: DatePicker?, year: Int, month: Int, day: Int) {
+        Calendar.getInstance().let {
+            it.set(year, month, day)
+            dataBinding.txtDate.setText(
+                day.toString().padStart(2, '0') + "-" + month.toString()
+                    .padStart(2, '0') + "-" + year
+            )
+            this.year = year
+            this.month = month
+            this.day = day
+        }
+    }
+
+    override fun onTimeSet(p0: TimePicker?, hour: Int, minute: Int) {
+        dataBinding.txtTime.setText(hour.toString().padStart(2, '0') + ":" + minute.toString().padStart(2, '0'))
+        this.hour = hour
+        this.minute = minute
     }
 }

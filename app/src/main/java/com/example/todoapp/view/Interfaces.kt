@@ -23,3 +23,11 @@ interface TodoSaveChangesListener {
 interface ButtonAddTodoClickListener {
     fun onAddTodoClick(view: View)
 }
+
+interface DateClickListener {
+    fun onDateCLick(view: View)
+}
+
+interface TimeClickListener {
+    fun onTimeCLick(view: View)
+}
