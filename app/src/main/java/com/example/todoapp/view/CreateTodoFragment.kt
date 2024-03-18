@@ -17,6 +17,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.example.todoapp.R
+import com.example.todoapp.databinding.FragmentCreateTodoBinding
 import com.example.todoapp.model.Todo
 import com.example.todoapp.util.NotificationHelper
 import com.example.todoapp.util.TodoWorker
@@ -24,20 +25,23 @@ import com.example.todoapp.viewmodel.DetailTodoViewModel
 import com.google.android.material.textfield.TextInputEditText
 import java.util.concurrent.TimeUnit
 
-class CreateTodoFragment : Fragment() {
+class CreateTodoFragment : Fragment(), RadioButtonListener, ButtonAddTodoClickListener {
     private lateinit var detailViewModel: DetailTodoViewModel
+    private lateinit var dataBinding: FragmentCreateTodoBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_create_todo, container, false)
+        dataBinding = FragmentCreateTodoBinding.inflate(inflater, container, false)
+        return dataBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         detailViewModel = ViewModelProvider(this).get(DetailTodoViewModel::class.java)
 
+        /*
         val btnAdd = view.findViewById<Button>(R.id.btnAdd)
         btnAdd.setOnClickListener {
             val inputTitle = view.findViewById<TextInputEditText>(R.id.inputTitle)
@@ -55,7 +59,6 @@ class CreateTodoFragment : Fragment() {
             detailViewModel.addTodo(list)
 
             Toast.makeText(view.context, "ToDo Added", Toast.LENGTH_LONG).show()
-            Navigation.findNavController(it).popBackStack()
 
 //            Notification
             NotificationHelper(view.context).createNotification("ToDo \"${inputTitle.text.toString()}\" Created", "A new ToDo has been created! Stay focus!")
@@ -72,6 +75,43 @@ class CreateTodoFragment : Fragment() {
 
 //            enqueue is where the work request is being queued. It will be registered on the android system and 30 seconds later will launch the notification
             WorkManager.getInstance(requireContext()).enqueue(myWorkRequest)
+
+            Navigation.findNavController(it).popBackStack()
         }
+        */
+
+        with(dataBinding) {
+            todo = Todo("", "", 3, 0)
+            radioListener = this@CreateTodoFragment
+            addListener = this@CreateTodoFragment
+        }
+    }
+
+    override fun onRadioClick(view: View, priority: Int, todo: Todo) {
+        todo.priority = priority
+    }
+
+    override fun onAddTodoClick(view: View) {
+        val list = listOf(dataBinding.todo!!)
+        detailViewModel.addTodo(list)
+
+        Toast.makeText(view.context, "ToDo Added", Toast.LENGTH_LONG).show()
+
+        val myWorkRequest = OneTimeWorkRequestBuilder<TodoWorker>()
+//                this means that the notification will show 30 seconds after work queued
+            .setInitialDelay(10, TimeUnit.SECONDS)
+            .setInputData(
+                workDataOf(
+//                    Key-value pairs is an InputData object that constructed from the key & value pair. Left part is the key and the right part is the value
+                    "title" to "ToDo Created",
+                    "message" to "A new ToDo has been created! Stay focus!"
+                )
+            )
+            .build()
+
+//            enqueue is where the work request is being queued. It will be registered on the android system and 30 seconds later will launch the notification
+        WorkManager.getInstance(requireContext()).enqueue(myWorkRequest)
+        Navigation.findNavController(view).popBackStack()
+
     }
 }
